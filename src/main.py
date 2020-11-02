@@ -16,7 +16,7 @@ logger.addHandler(hdlr=handler)
 logger.setLevel('DEBUG')
 logger.propagate = False  # prevents double printing
 
-TARGET_FILE_NAME="chrome.zip"
+TARGET_FILE_NAME="chromium.zip"
 
 def check_path(path):
     """Checks if path exists, create folder iteratively if not"""
