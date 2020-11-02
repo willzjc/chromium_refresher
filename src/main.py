@@ -7,9 +7,6 @@ config = {
             if len(line.strip())>0]
          }
 
-# fmt =
-# datefmt =
-
 formatter = logging.Formatter( '%(asctime)s [%(levelname)s] [%(filename)s|%(lineno)s - %(funcName)s()]: %(message)s',
                                datefmt= '%Y-%m-%d %I:%M:%S %p')
 logger = logging.getLogger(__name__)
@@ -32,6 +29,21 @@ def check_path(path):
                 os.mkdir(pathway)
     return path
 
+def download_ops(current_version):
+    '''once download is required - trigger this function'''
+    # File downloading operations
+    local_pathway = '../target/versions/%s' % current_version
+    local_pathway = check_path(os.path.realpath(local_pathway))
+    chrome_file = 'chromium.zip'
+    pathway_new_version_of_chrome = local_pathway + '/' + chrome_file
+    logger.info('Starting urllib.request.urlretrieve to %s' % pathway_new_version_of_chrome)
+    urllib.request.urlretrieve(url, pathway_new_version_of_chrome)
+    return pathway_new_version_of_chrome
+
+def disk_ops(pathway_new_version_of_chrome):
+    '''remove current version, replace with existing version'''
+    shutil.copy(src=pathway_new_version_of_chrome, dst=check_path('../target/current/'))
+
 if __name__=='__main__':
     logger.info(config)
     url = config['URL']
@@ -50,13 +62,7 @@ if __name__=='__main__':
 
     if prev_version != current_version:
         logger.info('Prev Version is no longer equal to current version\n%s vs %s'%(prev_version,current_version))
+        pathway_new_version_of_chrome=download_ops(current_version)
 
-        # File downloading operations
-        local_pathway='../target/versions/%s'%current_version
-        local_pathway=check_path(os.path.realpath(local_pathway))
-        chrome_file='chromium.zip'
-        new_version_of_chrome= local_pathway + '/' + chrome_file
-        logger.info('Starting urllib.request.urlretrieve to %s' % new_version_of_chrome)
-        urllib.request.urlretrieve(url, new_version_of_chrome)
-        logger.info("File downloaded to %s, now copying to current path" % new_version_of_chrome)
-        shutil.copy(src=new_version_of_chrome,dst=check_path('../target/current/'))
+        logger.info("File downloaded to %s, now copying to current path" % pathway_new_version_of_chrome)
+        disk_ops(pathway_new_version_of_chrome)
