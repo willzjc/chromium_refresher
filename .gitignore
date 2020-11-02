@@ -1,0 +1,9 @@
+.idea
+.vscode
+*.iml
+venv
+target
+venvpython36
+out
+out/*
+out/*/*
